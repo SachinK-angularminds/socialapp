@@ -3,6 +3,8 @@ import SignUp from './components/SignUp'
 import Login from './components/Login'
 import EditProfile from './components/EditProfile';
 import Feeds from './components/Feeds';
+import Feeds1 from './components/Feeds1';
+
 import Navbar from './components/Navbar'
 import LoginProtectedRoutes from './components/ProtectedRoutes/LoginProtectedRoutes'
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes'
@@ -55,7 +57,7 @@ console.log(userInfo)
      
      <Route path='/login' element={<Login />} />
          <Route path='/signup' element={<SignUp/> } />
-              <Route path='/defaultroute' element={<Feeds/> } />
+              <Route path='/defaultroute' element={<Feeds1/> } />
               <Route path='/editprofile/:id' element={<EditProfile/> } />
              <Route path='/' element={<Navigate to={'/login'}/>}/>
              </>

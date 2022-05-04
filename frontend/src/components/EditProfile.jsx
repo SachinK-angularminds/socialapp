@@ -26,6 +26,7 @@ import { styled } from '@mui/material/styles';
 import {useNavigate, useLocation,useParams} from 'react-router-dom'
 import Navbar from './Navbar'
 import { useEffect } from "react";
+import Skeleton from '@mui/material/Skeleton';
 import apiUrl from "../api"
 
 
@@ -54,7 +55,6 @@ function EditProfile(props) {
   };
   const [updateUserObj, setUpdateUserObj] = useState(initialState);
   const [image,setImage]=useState("")
-  const [initials,setInitials]=useState('')
   const [slashOn,setslashOn]=useState(false)
   const [errors, seterrors] = useState({
     email: "",

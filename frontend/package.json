@@ -2,7 +2,7 @@
   "name": "socialfeedapp",
   "version": "0.1.0",
   "private": true,
-  "proxy":"http://192.168.0.186:5000",
+  "proxy": "http://192.168.0.186:5000",
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
@@ -21,6 +21,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-google-login": "^5.2.2",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.0.0-beta.8",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.5",
