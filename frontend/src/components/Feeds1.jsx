@@ -14,8 +14,6 @@ import {
   AccordionDetails,
   IconButton,
   Avatar,
-  FormControlLabel,
-  Checkbox,
   Collapse,
   CardHeader,
   Button,
@@ -26,11 +24,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
-import axios from "axios";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import apiUrl from "../api";
+import Loading from "./Loading";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 const ExpandMore = styled((props) => {
@@ -59,20 +57,19 @@ function Feeds() {
   const [commentValue, setCommentValue] = useState("");
   const [image, setImage] = useState("");
   const [fullName, setFullName] = React.useState("");
-  const [like, setLike] = useState(false);
+  const [hasMore,setHasMore]=useState(true)
   const [userInfo, setUserInfo] = useState(() =>
     JSON.parse(localStorage.getItem("userInfo"))
   );
   const getAllPosts = async () => {
+    if (post.length >= 50) {
+        setHasMore(false)
+        return;
+      }
     const result = await apiUrl.get(`post/getAllPosts?page=1&size=5`);
-    let obj = {};
-    let temparr = [];
-    console.log(result.data.posts);
-    // for(let i = 0; i < result.data.posts.length; i++) {
-    //    obj={...result.data.posts[i],expanded:false,commentValue:'',likelength:result.data.posts[i].like.length}
-    //    temparr[i]=obj
-    // }
-    setPost(result.data.posts);
+    setTimeout(() => {
+        setPost([...post,...result.data.posts]);
+      }, 1500);
   };
   useEffect(() => {
     getUserProfile();
@@ -243,7 +240,7 @@ function Feeds() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <Typography>Accordion 1</Typography>
+                <Typography>Create Post</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box component="main" width="auto" height="auto">
@@ -314,6 +311,18 @@ function Feeds() {
         </Grid>
       </Box>
 
+      <InfiniteScroll
+          dataLength={post.length}
+          next={getAllPosts}
+          hasMore={hasMore}
+          loader={<Loading/>}
+          //height={400}
+          endMessage={
+            <p style={{ textAlign: "center" }}>
+              <b>Yay! You have seen it all</b>
+            </p>
+          }
+        >
       <Grid
         container
         spacing={0}
@@ -449,6 +458,7 @@ function Feeds() {
 
         
       </Grid>
+      </InfiniteScroll>
     </div>
   );
 }
