@@ -1,0 +1,53 @@
+{
+  "name": "socialfeedapp",
+  "version": "0.1.0",
+  "private": true,
+  "proxy":"http://192.168.0.186:5000",
+  "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.6.2",
+    "@mui/lab": "^5.0.0-alpha.79",
+    "@mui/material": "^5.6.3",
+    "@mui/styled-engine-sc": "^5.6.1",
+    "@mui/styles": "^5.6.2",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^0.27.2",
+    "date-fns": "^2.28.0",
+    "history": "^5.3.0",
+    "material-ui-phone-number": "^3.0.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-google-login": "^5.2.2",
+    "react-router-dom": "^6.0.0-beta.8",
+    "react-scripts": "5.0.1",
+    "styled-components": "^5.3.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
