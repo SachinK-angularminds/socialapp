@@ -37,7 +37,7 @@ function SignUp() {
   };
   const [userobj, setUserObj] = useState(initialState);
   const [errors, seterrors] = useState({ email: "", password: "",firstName:'',lastName:'' });
-
+  const [errorServer,setErrorServer]=useState('')
   const handleEmail = (event) => {
     setUserObj({ ...userobj, email: event });
     if (event === "") {
@@ -157,7 +157,7 @@ if(userobj.lastName===''){
 
   const handleSubmit = async () => {
     if (validate()) {
-      const result = await apiUrl
+     const result = await apiUrl
         .post("register", {
           firstName: userobj.firstName,
           lastName: userobj.lastName,
@@ -166,10 +166,14 @@ if(userobj.lastName===''){
         })
         .then(function (response) {
           console.log(response);
+          navigate("/login");
+        },(error)=>{
+         setErrorServer(error.response.data.error.message)
         });
-      navigate("/login");
+      
     }
   };
+  console.log(errorServer)
   return (
     <Grid
       container
@@ -250,6 +254,11 @@ if(userobj.lastName===''){
     <Button variant="contained" size='large' sx={{width:'11rem',backgroundColor: "#4d79ff"}} onClick={handleSubmit}>SignUp</Button>
     {/* <Button variant="contained" onClick={handleSignup}>Signout</Button> */}
     {/* </CardActions> */}
+    </Grid>
+    <Grid container>
+    <Grid item xs={12} sx={{mt:3,mb:3,color:'red'}}>
+    <Typography>{errorServer}</Typography>
+</Grid>
     </Grid>
     <Grid container>
       <Grid item xs={12} sx={{mt:3,mb:3}}>

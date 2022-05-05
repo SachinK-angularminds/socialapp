@@ -26,11 +26,10 @@ import { styled } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from "react-infinite-scroll-component";
 import apiUrl from "../api";
 import Loading from "./Loading";
 
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -54,27 +53,32 @@ function Feeds() {
   const [expanded, setExpanded] = React.useState(false);
   const [ind, setInd] = useState(-1);
   const [errors, setErrors] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
   const [commentValue, setCommentValue] = useState("");
   const [image, setImage] = useState("");
   const [fullName, setFullName] = React.useState("");
-  const [hasMore,setHasMore]=useState(true)
+  const [hasMore, setHasMore] = useState(true);
   const [userInfo, setUserInfo] = useState(() =>
     JSON.parse(localStorage.getItem("userInfo"))
   );
   const getAllPosts = async () => {
-    if (post.length >= 50) {
-        setHasMore(false)
-        return;
-      }
+    
+    if (post.length) {
+      setHasMore(false);
+      return;
+    }
     const result = await apiUrl.get(`post/getAllPosts?page=1&size=5`);
     setTimeout(() => {
-        setPost([...post,...result.data.posts]);
-      }, 1500);
+      setPost([...post, ...result.data.posts]);
+    }, 500);
   };
   useEffect(() => {
     getUserProfile();
     getAllPosts();
   }, []);
+
+
+
   useEffect(() => {
     let name = userInfo.firstName + " " + userInfo.lastName;
     setFullName(name);
@@ -92,7 +96,6 @@ function Feeds() {
       }
     });
   };
- 
 
   function handleChange(e) {
     let url = URL.createObjectURL(e.target.files[0]);
@@ -117,15 +120,8 @@ function Feeds() {
     }
   };
 
-  
   const handleExpand = (index) => {
-    // for (let i = 0; i < post.length; i++) {
-    //   if (i === index) {
-    //     console.log(i);
-    //     console.log(index);
-    //     // setExpanded(!expanded)
-    //   }
-    // }
+  
     setInd(index);
     setExpanded(!expanded);
   };
@@ -144,27 +140,18 @@ function Feeds() {
   };
   const handlePostComments = async (id) => {
     let postArr = [...post];
-    const result = await apiUrl
-      .put(`post/comment/${id}`, { comment: commentValue })
-      
+    const result = await apiUrl.put(`post/comment/${id}`, {
+      comment: commentValue,
+    });
 
-      for(let i=0; i<postArr.length; i++) {
-        if(postArr[i]._id === id){
-          postArr[i]=result.data.postsComment
-        }
+    for (let i = 0; i < postArr.length; i++) {
+      if (postArr[i]._id === id) {
+        postArr[i] = result.data.postsComment;
       }
-      setPost(postArr)
-      console.log(result.data.postsComment)
+    }
+    setPost(postArr);
+    console.log(result.data.postsComment);
 
-    // for (let i = 0; i < postArr.length; i++) {
-    //   console.log(postArr[i]._id);
-    //   if (postArr[i]._id === id) {
-    //     console.log(commentValue);
-    //     postArr[i].comments.push(commentValue);
-    //     postArr[i].commentValue = "";
-    //   }
-    // }
-    // setPost(postArr);
     setCommentValue("");
   };
 
@@ -195,12 +182,12 @@ function Feeds() {
     let postArr = [...post];
 
     const result = await apiUrl.put(`post/like/${id}`);
-    for(let i=0; i<postArr.length; i++) {
-      if(postArr[i]._id === id){
-        postArr[i]=result.data.postsLike
+    for (let i = 0; i < postArr.length; i++) {
+      if (postArr[i]._id === id) {
+        postArr[i] = result.data.postsLike;
       }
     }
-    setPost(postArr)
+    setPost(postArr);
     console.log(result.data);
   };
   const getInitials = (fullName) => {
@@ -221,14 +208,15 @@ function Feeds() {
     if (validate()) {
       const result = await apiUrl.post(`post`, formdata).then((response) => {
         console.log(response.data.post);
-        setPost((postData) => [...postData, response.data.post]);
+        setPost((postData) => [response.data.post,...postData]);
 
         // setPost(response.data.post);
       });
+
       setObjOfPost({ image: "", text: "" });
     }
   };
-    return (
+  return (
     <div style={{ backgroundColor: "#e6f2ff" }}>
       <Navbar />
       <Box sx={{ display: "flex", alignItems: "start" }}>
@@ -264,6 +252,7 @@ function Feeds() {
                           helperText={errors.file}
                           onChange={handleChange}
                         />
+
                         {objOfPost.image.length > 0 && (
                           <Card>
                             <CardActionArea>
@@ -312,152 +301,152 @@ function Feeds() {
       </Box>
 
       <InfiniteScroll
-          dataLength={post.length}
-          next={getAllPosts}
-          hasMore={hasMore}
-          loader={<Loading/>}
-          //height={400}
-          endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
-            </p>
-          }
-        >
-      <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        style={{ minHeight: "100vh", marginTop: "" }}
+        dataLength={post.length}
+        next={getAllPosts}
+        hasMore={hasMore}
+        loader={<Loading />}
+        //height={400}
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
       >
-        {post &&
-          post.map((data, index) => {
-            return (
-              <>
-                <Card key={data._id} sx={{ width: 345, mb: 3 }}>
-                  <CardHeader
-                    avatar={
-                      <>
-                        {image !== "" ? (
-                          <>
-                            <Avatar alt="Remy Sharp" src={`/${image}`}></Avatar>
-                          </>
-                        ) : (
-                          <Avatar
-                            alt="Remy Sharp"
-                            sx={{ bgcolor: red[500] }}
-                            src="/static/images/avatar/2.jpg"
-                          >
-                            {getInitials(fullName)}
-                          </Avatar>
-                        )}
-
-                        <Typography sx={{ margin: 1 }}>{fullName}</Typography>
-                      </>
-                    }
-                    action={
-                      <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                      </IconButton>
-                    }
-                  />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItem: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      style={{ width: "24rem", maxHeight: "240px" }}
-                      image={`/${data.profileImg}`}
-                      alt="Paella dish"
-                    />
-                  </Box>
-                  <CardContent>
-                    <Typography variant="body2" color="text.secondary">
-                      {data.caption}
-                    </Typography>
-                  </CardContent>
-                  <CardActions disableSpacing>
-                  
-                    <IconButton
-                      aria-label="add to favorites"
-                      style={{
-                        color: `${
-                          data.like.includes(userInfo._id) ? "red" : ""
-                        }`,
-                      }}
-                      onClick={(e) => handleLikeButton(e, data._id)}
-                    >
-                      <FavoriteIcon />
-                    </IconButton>
-                    <Typography>{data.like.length}</Typography>
-
-                    <ExpandMore
-                      expand={ind === index ? expanded : false}
-                      onClick={() => handleExpand(index)}
-                      aria-expanded={expanded}
-                      aria-label="show more"
-                    >
-                      <ExpandMoreIcon />
-                    </ExpandMore>
-                  </CardActions>
-                  <Collapse
-                    in={ind === index ? expanded : false}
-                    timeout="auto"
-                    unmountOnExit
-                  >
-                    {data.comments.map((commentvalue,i) => {
-                      return (
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          style={{ minHeight: "100vh", marginTop: "" }}
+        >
+          {post &&
+            post.map((data, index) => {
+              return (
+                <>
+                  <Card key={data._id} sx={{ width: 345, mb: 3 }}>
+                    <CardHeader
+                      avatar={
                         <>
-                          <Box
-                            sx={{
-                              margin: 2,
-                              display: "flex",
-                              alignItems: "start",
-                            }}
-                          >
-                            <Typography style={{ fontWeight: 600 }}>
-                              {fullName} :
-                            </Typography>
-                            <Typography>{commentvalue.comment}</Typography>
-                          </Box>
-                        </>
-                      );
-                    })}
-                    <Grid container>
-                      <Grid item xs={10} sx={{ marginTop: "-1rem" }}>
-                        <CardContent>
-                          <TextField
-                            id="standard-basic"
-                            label="Comments"
-                            value={commentValue}
-                            variant="standard"
-                            onChange={
-                              ((e) =>
-                                handleCommentValue(e.target.value, data._id),
-                              (e) => setCommentValue(e.target.value))
-                            }
-                            fullWidth
-                          />
-                        </CardContent>
-                      </Grid>
-                      <Grid item xs={2} sx={{ marginTop: "1rem" }}>
-                        <Button onClick={(e) => handlePostComments(data._id)}>
-                          Post
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Collapse>
-                </Card>
-              </>
-            );
-          })}
+                          {image !== "" ? (
+                            <>
+                              <Avatar
+                                alt="Remy Sharp"
+                                src={`/${image}`}
+                              ></Avatar>
+                            </>
+                          ) : (
+                            <Avatar
+                              alt="Remy Sharp"
+                              sx={{ bgcolor: red[500] }}
+                              src="/static/images/avatar/2.jpg"
+                            >
+                              {getInitials(fullName)}
+                            </Avatar>
+                          )}
 
-        
-      </Grid>
+                          <Typography sx={{ margin: 1 }}>{fullName}</Typography>
+                        </>
+                      }
+                      action={
+                        <IconButton aria-label="settings">
+                          <MoreVertIcon />
+                        </IconButton>
+                      }
+                    />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItem: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        style={{ width: "24rem", maxHeight: "240px" }}
+                        image={`/${data.profileImg}`}
+                        alt="Paella dish"
+                      />
+                    </Box>
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary">
+                        {data.caption}
+                      </Typography>
+                    </CardContent>
+                    <CardActions disableSpacing>
+                      <IconButton
+                        aria-label="add to favorites"
+                        style={{
+                          color: `${
+                            data.like.includes(userInfo._id) ? "red" : ""
+                          }`,
+                        }}
+                        onClick={(e) => handleLikeButton(e, data._id)}
+                      >
+                        <FavoriteIcon />
+                      </IconButton>
+                      <Typography>{data.like.length}</Typography>
+
+                      <ExpandMore
+                        expand={ind === index ? expanded : false}
+                        onClick={() => handleExpand(index)}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                      >
+                        <ExpandMoreIcon />
+                      </ExpandMore>
+                    </CardActions>
+                    <Collapse
+                      in={ind === index ? expanded : false}
+                      timeout="auto"
+                      unmountOnExit
+                    >
+                      {data.comments.map((commentvalue, i) => {
+                        return (
+                          <>
+                            <Box
+                              sx={{
+                                margin: 2,
+                                display: "flex",
+                                alignItems: "start",
+                              }}
+                            >
+                              <Typography style={{ fontWeight: 600 }}>
+                                {fullName} :
+                              </Typography>
+                              <Typography>{commentvalue.comment}</Typography>
+                            </Box>
+                          </>
+                        );
+                      })}
+                      <Grid container>
+                        <Grid item xs={10} sx={{ marginTop: "-1rem" }}>
+                          <CardContent>
+                            <TextField
+                              id="standard-basic"
+                              label="Comments"
+                              value={commentValue}
+                              variant="standard"
+                              onChange={
+                                ((e) =>
+                                  handleCommentValue(e.target.value, data._id),
+                                (e) => setCommentValue(e.target.value))
+                              }
+                              fullWidth
+                            />
+                          </CardContent>
+                        </Grid>
+                        <Grid item xs={2} sx={{ marginTop: "1rem" }}>
+                          <Button onClick={(e) => handlePostComments(data._id)}>
+                            Post
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </Collapse>
+                  </Card>
+                </>
+              );
+            })}
+        </Grid>
       </InfiniteScroll>
     </div>
   );

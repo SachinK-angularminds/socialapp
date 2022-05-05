@@ -26,7 +26,6 @@ import { styled } from '@mui/material/styles';
 import {useNavigate, useLocation,useParams} from 'react-router-dom'
 import Navbar from './Navbar'
 import { useEffect } from "react";
-import Skeleton from '@mui/material/Skeleton';
 import apiUrl from "../api"
 
 
@@ -61,16 +60,18 @@ function EditProfile(props) {
     name: "",
     gender: "",
   });
-
+console.log(image)
 
   useEffect(()=>{
     getUserProfile()
   },[])
 
   const getUserProfile = async() => {
-    const result=await apiUrl.get(`user-profile`).then((function(response) {
+   await apiUrl.get(`user-profile`).then((function(response) {
+      console.log(response.data.user)
      setUpdateUserObj(response.data.user)
      setImage(response.data.user.photo)
+   
  }))
   }
  console.log(image)
@@ -119,6 +120,7 @@ const handleChange=(e)=>{
   setUpdateUserObj({...updateUserObj,photo:e.target.files[0]})
   setslashOn(true)
   const url=URL.createObjectURL(e.target.files[0])
+  console.log(url)
  setImage(url)
 }
 console.log(updateUserObj)
@@ -173,7 +175,8 @@ const handleRemove=()=>{
         }
   };
   const handleSubmit = async() => {
-    formdata.append('photo',updateUserObj.photo)
+   {updateUserObj.photo !== '' && formdata.append('photo',updateUserObj.photo) }
+    
     formdata.append('name',updateUserObj.name)
     formdata.append('bio',updateUserObj.bio)
     formdata.append('gender',updateUserObj.gender)
