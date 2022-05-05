@@ -17,13 +17,13 @@ import {
   TextareaAutosize,
   Paper
 } from "@mui/material";
-import { LocalizationProvider, DatePicker } from "@mui/lab";
+import { LocalizationProvider, DatePicker,DesktopDatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import MuiPhoneNumber from "material-ui-phone-number";
 import { makeStyles } from "@mui/styles";
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import {useNavigate, useLocation,useParams} from 'react-router-dom'
+import {useNavigate,useParams} from 'react-router-dom'
 import Navbar from './Navbar'
 import { useEffect } from "react";
 import apiUrl from "../api"
@@ -47,25 +47,33 @@ function EditProfile(props) {
     name: "",
     bio: "",
     gender: "",
-    birthdate: null,
+    dob: null,
     email: "",
     mobilenumber: "",
     photo:""
   };
   const [updateUserObj, setUpdateUserObj] = useState(initialState);
   const [image,setImage]=useState("")
+  const [fullName, setFullName] = React.useState("");
+  const [userInfo, setUserInfo] = useState(() =>
+    JSON.parse(localStorage.getItem("userInfo"))
+  );
   const [slashOn,setslashOn]=useState(false)
   const [errors, seterrors] = useState({
     email: "",
     name: "",
     gender: "",
+    mobilenumber:""
   });
-console.log(image)
 
   useEffect(()=>{
     getUserProfile()
   },[])
 
+  useEffect(() => {
+    let name = userInfo.firstName + " " + userInfo.lastName;
+    setFullName(name);
+  }, [fullName]);
   const getUserProfile = async() => {
    await apiUrl.get(`user-profile`).then((function(response) {
       console.log(response.data.user)
@@ -113,7 +121,7 @@ console.log(image)
     // date = date.slice(1,11)
     setUpdateUserObj({
         ...updateUserObj,
-        birthdate:value
+        dob:value
     })
 }
 const handleChange=(e)=>{
@@ -133,7 +141,12 @@ const handleRemove=()=>{
       seterrors((prevState) => ({
         errors: { ...prevState.errors, gender: "Enter Values" },
       }));     }
-
+      if (updateUserObj.mobilenumber === "") {
+        seterrors((prevState) => ({
+          errors: { ...prevState.errors, mobilenumber: "Enter MobileNumber" },
+        }));     
+      flag=true
+      }
 
     if(updateUserObj.name===''){
       seterrors((prevState) => ({
@@ -168,6 +181,17 @@ const handleRemove=()=>{
         } else {
           seterrors((prevState) => ({ ...prevState.errors, email: "" }));
         }
+
+        if (updateUserObj.email === "") {
+          // seterrors({...errors,email:'Email cannot be empty'})
+          seterrors((prevState) => ({
+            ...prevState.errors,
+            email: "Email cannot be empty",
+          }));
+    
+          flag = true;
+        }
+
         if (flag) {
           return false;
         } else {
@@ -175,12 +199,12 @@ const handleRemove=()=>{
         }
   };
   const handleSubmit = async() => {
-   {updateUserObj.photo !== '' && formdata.append('photo',updateUserObj.photo) }
+   formdata.append('photo',updateUserObj.photo)
     
     formdata.append('name',updateUserObj.name)
     formdata.append('bio',updateUserObj.bio)
     formdata.append('gender',updateUserObj.gender)
-    formdata.append('dob',updateUserObj.birthdate)
+    formdata.append('dob',updateUserObj.dob)
     formdata.append('mobile',updateUserObj.mobilenumber)
     formdata.append('email',updateUserObj.email)
     console.log(formdata.get('photo'))
@@ -188,7 +212,7 @@ const handleRemove=()=>{
     if (validate()) {
        const result=await apiUrl.post(`edit/${id}`,formdata).then((response)=>console.log(response))
        setslashOn(false)
-       navigate('/defaultroute')
+       navigate('/feeds')
        
     }
   };
@@ -223,10 +247,7 @@ const handleRemove=()=>{
                 EditProfile
               </Typography>
             </Box>
-            {/* <Box sx={{ margin:'auto'
-        // alignItems:"center",
-        // justifyContent:"center"
-        }}> */}
+           
         <Grid container spacing={0} direction='column' alignItems='center' justify='center'>
           <Grid item xs={12}>
             <Box >
@@ -236,7 +257,7 @@ const handleRemove=()=>{
             
              sx={{ width: 120, height: 120 }}
            >
-             { getInitials('Sachin Kotian')}
+             { getInitials(fullName)}
            </Avatar>
             :  
             slashOn === false ?
@@ -330,9 +351,9 @@ const handleRemove=()=>{
             <Box sx={{ m: 2 }}>
               <Grid container>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
+                  <DesktopDatePicker
                     label="Date of Birth"
-                    value={new Date(updateUserObj.birthdate)}
+                    value={new Date(updateUserObj.dob)}
                     onChange={(newValue) => {
                       onDateHandler(newValue);
                     }}
@@ -340,6 +361,7 @@ const handleRemove=()=>{
                       <TextField {...params} fullWidth />
                     )}
                   />
+
                 </LocalizationProvider>
               </Grid>
             </Box>
@@ -363,7 +385,7 @@ const handleRemove=()=>{
                 onChange={handleMobileNumber}
                 fullWidth
               />
-              
+              {/* <Typography>{errors.}</Typography> */}
             </Box>
           </CardContent>
           <CardActions sx={{ marginLeft: "30px" }}>

@@ -1,6 +1,8 @@
 import './App.css';
 import SignUp from './components/SignUp'
 import Login from './components/Login'
+import Login1 from './components/Login1'
+
 import EditProfile from './components/EditProfile';
 import Feeds from './components/Feeds';
 import Feeds1 from './components/Feeds1';
@@ -19,7 +21,7 @@ function App() {
    
         <Route exact path="/" element={<Navigate to="/login" />}></Route>
         <Route element={<LoginProtectedRoutes />}>
-          <Route exact path="/login" element={<Login />}></Route>
+          <Route exact path="/login" element={<Login1 />}></Route>
           <Route exact path="/signup" element={<SignUp />}></Route>
 
         </Route>

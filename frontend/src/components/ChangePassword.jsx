@@ -44,10 +44,14 @@ function ChangePassword() {
     seterrors({newPassword:'',confirmPassword:''})
   }
   const [passwordObj,setPasswordObj]=useState(initialState)
-  const [errors,seterrors]=useState({newPassword:'',confirmPassword:''})
+  const [errors,seterrors]=useState({newPassword:'',confirmPassword:'',oldPassword:''})
 
   const handleCurrentPassword=(event)=>{
     setPasswordObj({...passwordObj,oldPassword:event})
+    if(event!==''){
+      seterrors({ ...errors, oldPassword: "" });
+
+    }
   }
   const handleNewPassword=(event)=>{
     setPasswordObj({...passwordObj,newPassword:event})
@@ -69,8 +73,30 @@ function ChangePassword() {
     }
   }
   const validate = () => {
-    console.log(passwordObj.confirmPassword);
+    console.log(passwordObj.oldPassword);
     let flag = false;
+
+    if (passwordObj.oldPassword === "") {
+      // seterrors({...errors,password:'Password cannot be empty'})
+      console.log('hello')
+      seterrors((prevState) => ({
+        errors: { ...prevState.errors, oldPassword: "Password cannot be empty" }
+      }));
+      flag = true;
+    } else if (
+      /^(?=.*\d)(?=.*[a-z]).{6,20}$/.test(passwordObj.oldPassword) === false
+    ) {
+      // seterrors({...errors,password:'Invalid Password'})
+      seterrors((prevState) => (
+        {...prevState.errors, oldPassword: "Invalid Password" }
+      ));
+
+      flag = true;
+    } else {
+      seterrors((prevState) => (
+         { ...prevState.errors, oldPassword: "" }
+      ));
+    }
 
     if (passwordObj.confirmPassword === "") {
       // seterrors({...errors,password:'Password cannot be empty'})
@@ -107,6 +133,9 @@ function ChangePassword() {
          { ...prevState.errors, newPassword: "" }
       ));
     }
+
+
+   
     if (flag) {
       return false;
     } else {
@@ -116,15 +145,20 @@ function ChangePassword() {
 
   const handleSubmit=async()=>{
     if(validate()){
-      const result=await apiUrl.post('change-password',{
+      await apiUrl.post('change-password',{
       oldPassword:passwordObj.oldPassword,
       newPassword:passwordObj.newPassword,
       confirmPassword:passwordObj.confirmPassword
     })
     .then(function (response) {
-console.log(response)      
+
+handleClose() 
+  },(error)=>{
+    seterrors((prevState) => ({
+      ...prevState.errors, oldPassword: error.response.data.message }
+    ));
   })
-  handleClose()
+ 
     }
     
 }
@@ -195,6 +229,8 @@ console.log(response)
                     id="outlined-basic"
                     label="Current Password"
                     variant="outlined"
+                    error={errors.oldPassword  ? true : false}
+                    helperText={errors.oldPassword}
                     onChange={(e)=>handleCurrentPassword(e.target.value)}
                   />
                 </Grid>

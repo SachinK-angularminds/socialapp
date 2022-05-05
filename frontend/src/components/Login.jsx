@@ -11,10 +11,8 @@ import {
 } from "@mui/material";
 import { useNavigate, NavLink } from "react-router-dom";
 import apiUrl from "../api";
-import Snackbar from '@mui/material/Snackbar';
 import { GoogleLogin } from "react-google-login";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import MuiAlert from '@mui/material/Alert';
 
 const theme = createTheme();
 theme.typography.div = {
@@ -27,10 +25,6 @@ theme.typography.h4 = {
   fontSize: "2rem",
   color: "#4d79ff",
 };
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 function Login() {
   let navigate=useNavigate()
   const initialState = {
@@ -41,19 +35,7 @@ function Login() {
   const [userceredantialobj, setUserCrediantialObj] = useState(initialState);
   const [errors, seterrors] = useState({ email: "", password: "" });
   const [errorServer,setErrorServer]=useState('')
-  const [open, setOpen] = React.useState(false);
 
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
   const handleEmail = (event) => {
     setUserCrediantialObj({ ...userceredantialobj, email: event });
     if (event === "") {
@@ -234,6 +216,11 @@ function Login() {
           />
         </Box>
       </CardContent>
+      <Grid container>
+        <Grid item xs={12} style={{marginTop:"-1.5rem",color:'red'}}>
+        {errorServer}
+        </Grid>
+        </Grid>
       <Grid container>
         <Grid item xs={12}>
           {/* <CardActions sx={{marginLeft:'30px'}}> */}

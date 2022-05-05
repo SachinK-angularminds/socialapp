@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   Card,
@@ -63,21 +63,42 @@ function Feeds() {
   );
   const getAllPosts = async () => {
     
+    const result = await apiUrl.get(`post/getAllPosts?page=${pageNumber}&size=10`);
+    // setTimeout(() => {
+    //   setPost([...post, ...result.data.posts]);
+    // }, 500);
+
+    return result.data.posts
+  };
+
+
+  const fetchData=async()=>{
+    const dataFromServer=await getAllPosts()
+    setTimeout(() => {
+      setPost([...post, ...dataFromServer]);
+        }, 500);
+    
+    
+    if (post.length>43) {
+     setHasMore(false);
+      return;
+    }
+    setPageNumber(pageNumber+1);
+  }
+  useEffect(() => {
+    getUserProfile();
+   // getAllPosts();
+    getAllUsers()
+  }, []);
+
+  const getAllUsers = async () => {
     if (post.length) {
       setHasMore(false);
       return;
     }
-    const result = await apiUrl.get(`post/getAllPosts?page=1&size=5`);
-    setTimeout(() => {
-      setPost([...post, ...result.data.posts]);
-    }, 500);
+    const result = await apiUrl.get(`getAllUsers`);
+    console.log(result)
   };
-  useEffect(() => {
-    getUserProfile();
-    getAllPosts();
-  }, []);
-
-
 
   useEffect(() => {
     let name = userInfo.firstName + " " + userInfo.lastName;
@@ -99,10 +120,8 @@ function Feeds() {
 
   function handleChange(e) {
     let url = URL.createObjectURL(e.target.files[0]);
-    console.log(url);
 
     setObjOfPost({ ...objOfPost, file: e.target.files[0], image: url });
-    console.log(url);
 
     if (e.target.files[0] !== "") {
       setErrors({ ...errors, file: "" });
@@ -121,7 +140,6 @@ function Feeds() {
   };
 
   const handleExpand = (index) => {
-  
     setInd(index);
     setExpanded(!expanded);
   };
@@ -158,7 +176,8 @@ function Feeds() {
   const validate = () => {
     let flag = false;
 
-    if (objOfPost.text === "") {
+    if (objOfPost.text.length === 0) {
+      console.log('hi')
       setErrors((prevState) => ({
         errors: { ...prevState.errors, text: "Caption cannot be empty" },
       }));
@@ -302,7 +321,7 @@ function Feeds() {
 
       <InfiniteScroll
         dataLength={post.length}
-        next={getAllPosts}
+        next={fetchData}
         hasMore={hasMore}
         loader={<Loading />}
         //height={400}

@@ -83,6 +83,7 @@ useEffect(()=>{
     localStorage.clear()
   }
   return (
+    <>
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -145,7 +146,7 @@ useEffect(()=>{
                     </Typography>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu}>
-                  <Typography textAlign="left"><ChangePassword/></Typography>
+                  <ChangePassword/>
                 </MenuItem>
                
                 <MenuItem  onClick={handleCloseUserMenu}>
@@ -167,6 +168,7 @@ useEffect(()=>{
         </Toolbar>
       </Container>
     </AppBar>
+    </>
   );
 };
 export default Navbar;
