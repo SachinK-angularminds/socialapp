@@ -70,6 +70,13 @@ function EditProfile(props) {
     getUserProfile();
   }, []);
 
+//   const getPhoto = () => {
+//     if(updateUserObj.photo)
+//   }
+// useEffect(() => {
+//   getPhoto()
+// },[photo])
+
   useEffect(() => {
     let name = userInfo.firstName + " " + userInfo.lastName;
     setFullName(name);

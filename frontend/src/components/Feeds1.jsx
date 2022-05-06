@@ -67,7 +67,7 @@ function Feeds() {
 
   const getAllPosts = async () => {
     
-    const result = await apiUrl.get(`post/getAllPosts?page=${pageNumber}&size=10`);
+    const result = await apiUrl.get(`post/getAllPosts?page=${pageNumber}&size=3`);
     // setTimeout(() => {
     //   setPost([...post, ...result.data.posts]);
     // }, 500);
@@ -244,6 +244,7 @@ function Feeds() {
       setObjOfPost({ image: "", text: "" });
     }
   };
+ 
   return (
     <div style={{ backgroundColor: "#e6f2ff" }}>
       <Navbar />
@@ -354,22 +355,35 @@ function Feeds() {
                     <CardHeader
                       avatar={
                         <>
-                          {image !== "" ? (
-                            <>
-                              <Avatar
-                                alt={data.userName}
-                                src={`/${image}`}
-                              ></Avatar>
-                            </>
-                          ) : (
+                        {data.createdBy === userInfo._id ? 
+                        <>
+                         {image !== "" ? (
+                          <>
                             <Avatar
-                              sx={{ bgcolor: red[500] }}
-                            >
-                            {/* { getInitials(data.userName)} */}
-                            </Avatar>
-                          )}
+                              alt={data.userName}
+                              src={`/${image}`}
+                            ></Avatar>
+                          </>
+                        ) : (
+                          <Avatar
+                            sx={{ bgcolor: red[500] }}
+                          >
+                         { getInitials(data.userName)} 
+                          </Avatar>
+                        )}
+                        </>
+                        :
+                        <Avatar
+                        sx={{ bgcolor: red[500] }}
+                      >
+                     { getInitials(data.userName)} 
+                      </Avatar>
+                        }
+                        <>
+                         
 
                           <Typography sx={{ margin: 1 }}>{data.userName}</Typography>
+                        </>
                         </>
                       }
                       action={
