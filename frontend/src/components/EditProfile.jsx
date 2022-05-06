@@ -84,8 +84,22 @@ function EditProfile(props) {
   const getUserProfile = async () => {
     await apiUrl.get(`user-profile`).then(function (response) {
       console.log(response.data.user);
-      setUpdateUserObj(response.data.user);
-      setImage(response.data.user.photo);
+      if(!response.data){
+        setUpdateUserObj({})
+        setImage({})
+      }else{
+        console.log(response.data)
+        setUpdateUserObj(response.data.user);
+        setImage(response.data.user.photo);
+       
+        // if(response.data.user.photo === '' || response.data.user.photo === undefined ){
+        //   setImage('')
+        // }else{
+        //   setImage(response.data.user.photo);
+
+        // }
+      }
+     
     });
   };
   console.log(image);
@@ -327,7 +341,7 @@ function EditProfile(props) {
                     id="outlined-basic"
                     label="Name"
                     variant="outlined"
-                    value={updateUserObj.name}
+                    value={updateUserObj?updateUserObj.name:''}
                     onChange={(e) => handleName(e.target.value)}
                     error={errors.name ? true : false}
                     helperText={errors.name}
@@ -338,7 +352,7 @@ function EditProfile(props) {
                   <TextareaAutosize
                     aria-label="minimum height"
                     minRows={3}
-                    value={updateUserObj.bio}
+                    value={updateUserObj?updateUserObj.bio:''}
                     placeholder="Bio"
                     style={{ width: 520 }}
                     onChange={(e) =>
@@ -357,7 +371,7 @@ function EditProfile(props) {
                         name="gender"
                         aria-labelledby="genderlabel"
                         onChange={handleGender}
-                        value={updateUserObj.gender}
+                        value={updateUserObj?updateUserObj.gender:''}
                         row
                       >
                         <FormControlLabel
@@ -384,7 +398,7 @@ function EditProfile(props) {
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DesktopDatePicker
                         label="Date of Birth"
-                        value={new Date(updateUserObj.dob)}
+                        value={updateUserObj?new Date(updateUserObj.dob):''}
                         onChange={(newValue) => {
                           onDateHandler(newValue);
                         }}
@@ -401,7 +415,7 @@ function EditProfile(props) {
                     id="outlined-basic"
                     label="Email"
                     variant="outlined"
-                    value={updateUserObj.email}
+                    value={updateUserObj?updateUserObj.email:''}
                     onChange={(e) => handleEmail(e.target.value)}
                     error={errors.email ? true : false}
                     helperText={errors.email}
@@ -411,7 +425,7 @@ function EditProfile(props) {
                 <Box sx={{ m: 2 }}>
                   <MuiPhoneNumber
                     defaultCountry={"in"}
-                    value={updateUserObj.mobile}
+                    value={updateUserObj?updateUserObj.mobile:''}
                     onChange={handleMobileNumber}
                     fullWidth
                   />

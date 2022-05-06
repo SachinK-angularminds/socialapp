@@ -1,5 +1,4 @@
 import axios from 'axios'
-let accesstoken=JSON.parse(localStorage.getItem('token'))
 const apiUrl=axios.create({
     baseURL:'http://192.168.0.186:5000/',
    
@@ -7,7 +6,11 @@ const apiUrl=axios.create({
 
 apiUrl.interceptors.request.use(function (config) {
     const accessToken = JSON.parse(localStorage.getItem('token'));
-    config.headers.Authorization =  `Bearer ${accessToken}` 
+     const accessToken1 = JSON.parse(localStorage.getItem('token1'));
+
+    // config.headers.Authorization = `Bearer ${accessToken}`
+   config.headers.Authorization = accessToken?`Bearer ${accessToken}`:`Bearer ${accessToken1}` 
+
     return config;
 });
 export default apiUrl;

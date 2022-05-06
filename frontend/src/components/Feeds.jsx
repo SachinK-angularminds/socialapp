@@ -360,11 +360,21 @@ function Feeds() {
                       avatar={
                         <>
                        {allusers && allusers.map((user,indexvalue) =>(
-                         user._id === data.userId ?
-                          Object.keys(user.photo) !== undefined ?
-                          console.log(user.firstName)
-                          :
-                          console.log('inside')
+                         user._id === data.createdBy ?
+                         <>
+                        {user.hasOwnProperty('photo')?
+
+                          ''
+                           :
+                           ''
+                           }
+
+
+                          </>
+                          // Object.keys(user.photo) !== undefined ?
+                          // console.log(user.firstName)
+                          // :
+                          // console.log('inside')
                          :''
 
                          

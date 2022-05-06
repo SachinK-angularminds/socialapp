@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Card,
   CardActions,
+  Paper,
   Grid,
   Typography,
   Box,
@@ -179,9 +180,10 @@ function Login() {
     spacing={0}
     direction="column"
     alignItems="center"
-    style={{ minHeight: "100vh", marginTop: "", backgroundColor: "#b3c6ff" }}
+    style={{ minHeight: "100vh", marginTop: "0.3rem", backgroundColor: "white" }}
   >
-    <Card sx={{ width: 420, marginTop: "100px", spacing: "10px" }}>
+    {/* <Paper elevation={3}> */}
+    <Card sx={{ width: 420, marginTop: "100px", spacing: "10px",boxShadow: 6  }}>
       <CardContent>
         <Box>
           <ThemeProvider theme={theme}>
@@ -270,6 +272,7 @@ function Login() {
         </Grid>
       </Grid>
     </Card>
+    {/* </Paper> */}
   </Grid>
   )
 }

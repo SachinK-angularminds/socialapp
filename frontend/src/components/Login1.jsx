@@ -74,7 +74,7 @@ function Login() {
          idToken: idtokenval,
        });
        console.log(result);
-        localStorage.setItem('token',JSON.stringify(result.data.token))
+        localStorage.setItem('token1',JSON.stringify(result.data.token))
        localStorage.setItem("userInfo", JSON.stringify(result.data.user));
        navigate("/feeds");
      }catch(e){
@@ -139,6 +139,7 @@ function Login() {
         password: userceredantialobj.password,
       })
       .then(function (response) {
+        console.log(response)
         localStorage.setItem('token',JSON.stringify(response.data.token))
         localStorage.setItem('userInfo',JSON.stringify(response.data.user))
         navigate('/feeds')
@@ -154,9 +155,9 @@ function Login() {
       spacing={0}
       direction="column"
       alignItems="center"
-      style={{ minHeight: "100vh", marginTop: "", backgroundColor: "#b3c6ff" }}
+      style={{ minHeight: "100vh", marginTop: "0.5rem" }}
     >
-      <Card sx={{ width: 420, marginTop: "100px", spacing: "10px" }}>
+      <Card sx={{ width: 420, marginTop: "100px", spacing: "10px" ,boxShadow: 6 }}>
         <CardContent>
           <Box>
             <ThemeProvider theme={theme}>
