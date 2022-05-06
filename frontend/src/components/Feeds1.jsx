@@ -52,8 +52,8 @@ function Feeds() {
   let [post, setPost] = useState("");
   const [expanded, setExpanded] = React.useState(false);
   const [ind, setInd] = useState(-1);
-  const [errors, setErrors] = useState([]);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [errors, setErrors] = useState({file:'',text:''});
+  const [pageNumber, setPageNumber] = useState(2);
   const [commentValue, setCommentValue] = useState("");
   const [image, setImage] = useState("");
   const [fullName, setFullName] = React.useState("");
@@ -61,12 +61,26 @@ function Feeds() {
   const [userInfo, setUserInfo] = useState(() =>
     JSON.parse(localStorage.getItem("userInfo"))
   );
+
+
+
+
   const getAllPosts = async () => {
     
     const result = await apiUrl.get(`post/getAllPosts?page=${pageNumber}&size=10`);
     // setTimeout(() => {
     //   setPost([...post, ...result.data.posts]);
     // }, 500);
+
+    return result.data.posts
+  };
+
+  const getAFirstPosts = async () => {
+    
+    const result = await apiUrl.get(`post/getAllPosts?page=1&size=10`);
+    setTimeout(() => {
+      setPost(result.data.posts);
+    }, 500);
 
     return result.data.posts
   };
@@ -78,24 +92,20 @@ function Feeds() {
       setPost([...post, ...dataFromServer]);
         }, 500);
     
-    
-    if (post.length>43) {
+    if (post.length>50 ) {
      setHasMore(false);
-      return;
     }
     setPageNumber(pageNumber+1);
   }
   useEffect(() => {
     getUserProfile();
-   // getAllPosts();
+    getAFirstPosts();
     getAllUsers()
   }, []);
 
+
   const getAllUsers = async () => {
-    if (post.length) {
-      setHasMore(false);
-      return;
-    }
+  
     const result = await apiUrl.get(`getAllUsers`);
     console.log(result)
   };
@@ -131,11 +141,13 @@ function Feeds() {
   const handleCaptionText = (e) => {
     setObjOfPost({
       ...objOfPost,
-      text: e.target.value,
+      text: e,
     });
 
-    if (e.target.value !== "") {
-      setErrors({ ...errors, text: "" });
+    if (e === "") {
+      setErrors({ ...errors, text: "Caption cannot be empty" });
+    }else{
+      setErrors({ ...errors, text:''})
     }
   };
 
@@ -168,18 +180,17 @@ function Feeds() {
       }
     }
     setPost(postArr);
-    console.log(result.data.postsComment);
 
     setCommentValue("");
   };
 
   const validate = () => {
     let flag = false;
-
-    if (objOfPost.text.length === 0) {
+   
+    if (objOfPost.text ==='') {
       console.log('hi')
       setErrors((prevState) => ({
-        errors: { ...prevState.errors, text: "Caption cannot be empty" },
+       errors: { ...prevState.errors, text: "Caption cannot be empty" }
       }));
       flag = true;
     }
@@ -190,7 +201,6 @@ function Feeds() {
       }));
       flag = true;
     }
-
     if (flag) {
       return false;
     } else {
@@ -219,17 +229,16 @@ function Feeds() {
     }, "");
     return initials;
   };
+  
   const handlePostData = async () => {
     formdata.append("profileImg", objOfPost.file);
     formdata.append("caption", objOfPost.text);
-    //formdata.append('userId',userInfo._id)
 
     if (validate()) {
-      const result = await apiUrl.post(`post`, formdata).then((response) => {
+       await apiUrl.post(`post`, formdata).then((response) => {
         console.log(response.data.post);
         setPost((postData) => [response.data.post,...postData]);
 
-        // setPost(response.data.post);
       });
 
       setObjOfPost({ image: "", text: "" });
@@ -294,9 +303,9 @@ function Feeds() {
                           placeholder="Caption"
                           value={objOfPost.text}
                           style={{ width: "30em" }}
-                          onChange={(e) => handleCaptionText(e)}
+                          onChange={(e) => handleCaptionText(e.target.value)}
                         />
-                        <Box sx={{ marginLeft: "1.2rem" }}>
+                        <Box sx={{ marginLeft: "9rem" }}>
                           <Typography
                             align="left"
                             sx={{ color: "red", fontSize: "0.8rem" }}
@@ -324,7 +333,6 @@ function Feeds() {
         next={fetchData}
         hasMore={hasMore}
         loader={<Loading />}
-        //height={400}
         endMessage={
           <p style={{ textAlign: "center" }}>
             <b>Yay! You have seen it all</b>
@@ -349,21 +357,19 @@ function Feeds() {
                           {image !== "" ? (
                             <>
                               <Avatar
-                                alt="Remy Sharp"
+                                alt={data.userName}
                                 src={`/${image}`}
                               ></Avatar>
                             </>
                           ) : (
                             <Avatar
-                              alt="Remy Sharp"
                               sx={{ bgcolor: red[500] }}
-                              src="/static/images/avatar/2.jpg"
                             >
-                              {getInitials(fullName)}
+                            {/* { getInitials(data.userName)} */}
                             </Avatar>
                           )}
 
-                          <Typography sx={{ margin: 1 }}>{fullName}</Typography>
+                          <Typography sx={{ margin: 1 }}>{data.userName}</Typography>
                         </>
                       }
                       action={
@@ -430,7 +436,7 @@ function Feeds() {
                               }}
                             >
                               <Typography style={{ fontWeight: 600 }}>
-                                {fullName} :
+                                {commentvalue.userName} :
                               </Typography>
                               <Typography>{commentvalue.comment}</Typography>
                             </Box>

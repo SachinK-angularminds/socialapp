@@ -15,22 +15,21 @@ import {
   RadioGroup,
   Radio,
   TextareaAutosize,
-  Paper
+  Paper,
 } from "@mui/material";
-import { LocalizationProvider, DatePicker,DesktopDatePicker } from "@mui/lab";
+import { LocalizationProvider, DatePicker, DesktopDatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import MuiPhoneNumber from "material-ui-phone-number";
 import { makeStyles } from "@mui/styles";
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
-import {useNavigate,useParams} from 'react-router-dom'
-import Navbar from './Navbar'
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
+import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "./Navbar";
 import { useEffect } from "react";
-import apiUrl from "../api"
+import apiUrl from "../api";
 
-
-const Input = styled('input')({
-  display: 'none',
+const Input = styled("input")({
+  display: "none",
 });
 const useStyles = makeStyles({
   root: {
@@ -39,9 +38,9 @@ const useStyles = makeStyles({
 });
 function EditProfile(props) {
   const classes = useStyles();
-  const {id}=useParams()
-  let navigate=useNavigate()
-  const formdata = new FormData(); 
+  const { id } = useParams();
+  let navigate = useNavigate();
+  const formdata = new FormData();
 
   const initialState = {
     name: "",
@@ -49,40 +48,40 @@ function EditProfile(props) {
     gender: "",
     dob: null,
     email: "",
-    mobilenumber: "",
-    photo:""
+    mobile: "",
+    photo: "",
   };
   const [updateUserObj, setUpdateUserObj] = useState(initialState);
-  const [image,setImage]=useState("")
+  const [image, setImage] = useState("");
+  const [open,setOpen] = useState(false)
   const [fullName, setFullName] = React.useState("");
   const [userInfo, setUserInfo] = useState(() =>
     JSON.parse(localStorage.getItem("userInfo"))
   );
-  const [slashOn,setslashOn]=useState(false)
+  const [slashOn, setslashOn] = useState(false);
   const [errors, seterrors] = useState({
     email: "",
     name: "",
     gender: "",
-    mobilenumber:""
+    mobile: "",
   });
 
-  useEffect(()=>{
-    getUserProfile()
-  },[])
+  useEffect(() => {
+    getUserProfile();
+  }, []);
 
   useEffect(() => {
     let name = userInfo.firstName + " " + userInfo.lastName;
     setFullName(name);
   }, [fullName]);
-  const getUserProfile = async() => {
-   await apiUrl.get(`user-profile`).then((function(response) {
-      console.log(response.data.user)
-     setUpdateUserObj(response.data.user)
-     setImage(response.data.user.photo)
-   
- }))
-  }
- console.log(image)
+  const getUserProfile = async () => {
+    await apiUrl.get(`user-profile`).then(function (response) {
+      console.log(response.data.user);
+      setUpdateUserObj(response.data.user);
+      setImage(response.data.user.photo);
+    });
+  };
+  console.log(image);
   const handleName = (event) => {
     setUpdateUserObj({ ...updateUserObj, name: event });
     if (event === "") {
@@ -106,7 +105,9 @@ function EditProfile(props) {
     }
   };
   const handleMobileNumber = (value) => {
-    setUpdateUserObj({ ...updateUserObj, mobilenumber: value });
+    setUpdateUserObj({ ...updateUserObj, mobile: value });
+    console.log(value.length)
+   
   };
   const handleGender = (event) => {
     setUpdateUserObj({ ...updateUserObj, gender: event.target.value });
@@ -116,288 +117,315 @@ function EditProfile(props) {
       seterrors({ ...errors, gender: "" });
     }
   };
-  const onDateHandler=(value)=>{
-    
+  const onDateHandler = (value) => {
     // date = date.slice(1,11)
     setUpdateUserObj({
-        ...updateUserObj,
-        dob:value
-    })
-}
-const handleChange=(e)=>{
-  setUpdateUserObj({...updateUserObj,photo:e.target.files[0]})
-  setslashOn(true)
-  const url=URL.createObjectURL(e.target.files[0])
-  console.log(url)
- setImage(url)
-}
-console.log(updateUserObj)
-const handleRemove=()=>{
-  setImage('')
-}
+      ...updateUserObj,
+      dob: value,
+    });
+  };
+  const handleChange = (e) => {
+    setUpdateUserObj({ ...updateUserObj, photo: e.target.files[0] });
+    setslashOn(true);
+    const url = URL.createObjectURL(e.target.files[0]);
+    console.log(url);
+    setImage(url);
+  };
+  console.log(updateUserObj);
+  const handleRemove = () => {
+    setImage("");
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  }
   const validate = () => {
-    let flag=false
+    let flag = false;
     if (updateUserObj.gender === "") {
       seterrors((prevState) => ({
         errors: { ...prevState.errors, gender: "Enter Values" },
-      }));     }
-      if (updateUserObj.mobilenumber === "") {
-        seterrors((prevState) => ({
-          errors: { ...prevState.errors, mobilenumber: "Enter MobileNumber" },
-        }));     
-      flag=true
-      }
+      }));
+    }
+    if (updateUserObj.mobile === undefined) {
+      seterrors((prevState) => ({
+        errors: { ...prevState.errors, mobile: "Enter MobileNumber" },
+      }));
+      flag = true;
+    }else if(updateUserObj.mobile.length !==15){
+      seterrors((prevState) => ({
+        errors: { ...prevState.errors, mobile: "Mobile number must be 10 digits" },
+      }));
+      flag = true;
+    }
 
-    if(updateUserObj.name===''){
+    if (updateUserObj.name === "") {
       seterrors((prevState) => ({
         errors: { ...prevState.errors, name: "FirstName cannot be empty" },
-      })); 
+      }));
       flag = true;
-    }else{
-        seterrors((prevState) => ({
-          errors: { ...prevState.errors, name: "" },
-        }));}
+    } else {
+      seterrors((prevState) => ({
+        errors: { ...prevState.errors, name: "" },
+      }));
+    }
 
+    if (updateUserObj.email === "") {
+      // seterrors({...errors,email:'Email cannot be empty'})
+      seterrors((prevState) => ({
+        ...prevState.errors,
+        email: "Email cannot be empty",
+      }));
 
-        if (updateUserObj.email === "") {
-          // seterrors({...errors,email:'Email cannot be empty'})
-          seterrors((prevState) => ({
-            ...prevState.errors,
-            email: "Email cannot be empty",
-          }));
-    
-          flag = true;
-        } else if (
-          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(updateUserObj.email) ===
-          false
-        ) {
-          // seterrors({...errors,email:'Invalid Email'})
-          seterrors((prevState) => ({
-            ...prevState.errors,
-            email: "Invalid Email",
-          }));
-    
-          flag = true;
-        } else {
-          seterrors((prevState) => ({ ...prevState.errors, email: "" }));
-        }
+      flag = true;
+    } else if (
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+        updateUserObj.email
+      ) === false
+    ) {
+      // seterrors({...errors,email:'Invalid Email'})
+      seterrors((prevState) => ({
+        ...prevState.errors,
+        email: "Invalid Email",
+      }));
 
-        if (updateUserObj.email === "") {
-          // seterrors({...errors,email:'Email cannot be empty'})
-          seterrors((prevState) => ({
-            ...prevState.errors,
-            email: "Email cannot be empty",
-          }));
-    
-          flag = true;
-        }
+      flag = true;
+    } else {
+      seterrors((prevState) => ({ ...prevState.errors, email: "" }));
+    }
 
-        if (flag) {
-          return false;
-        } else {
-          return true;
-        }
+    if (updateUserObj.email === "") {
+      seterrors((prevState) => ({
+        ...prevState.errors,
+        email: "Email cannot be empty",
+      }));
+
+      flag = true;
+    }
+
+    if (flag) {
+      return false;
+    } else {
+      return true;
+    }
   };
-  const handleSubmit = async() => {
-   formdata.append('photo',updateUserObj.photo)
-    
-    formdata.append('name',updateUserObj.name)
-    formdata.append('bio',updateUserObj.bio)
-    formdata.append('gender',updateUserObj.gender)
-    formdata.append('dob',updateUserObj.dob)
-    formdata.append('mobile',updateUserObj.mobilenumber)
-    formdata.append('email',updateUserObj.email)
-    console.log(formdata.get('photo'))
-    console.log(formdata.get('mobilenumber'))
+  console.log(errors);
+  const handleSubmit = async () => {
+    formdata.append("photo", updateUserObj.photo);
+    formdata.append("name", updateUserObj.name);
+    formdata.append("bio", updateUserObj.bio);
+    formdata.append("gender", updateUserObj.gender);
+    formdata.append("dob", updateUserObj.dob);
+    formdata.append("mobile", updateUserObj.mobile);
+    formdata.append("email", updateUserObj.email);
+    console.log(formdata.get("photo"));
     if (validate()) {
-       const result=await apiUrl.post(`edit/${id}`,formdata).then((response)=>console.log(response))
-       setslashOn(false)
-       navigate('/feeds')
-       
+      const result = await apiUrl
+        .post(`edit/${id}`, formdata)
+        .then((response) => console.log(response));
+      setslashOn(false);
+      navigate("/feeds");
     }
   };
   const getInitials = (fullName) => {
-    const allNames = fullName.trim().split(' ');
+    const allNames = fullName.trim().split(" ");
     const initials = allNames.reduce((acc, curr, index) => {
-      if(index === 0 || index === allNames.length - 1){
+      if (index === 0 || index === allNames.length - 1) {
         acc = `${acc}${curr.charAt(0).toUpperCase()}`;
       }
       return acc;
-    }, '');
+    }, "");
     return initials;
-  }
+  };
   return (
     <>
-     <Navbar/>
-   
-    <Grid
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      style={{ minHeight: "100vh", marginTop: ""}}
-    >
-        <Paper elevation={6} sx={{margin:5}} >
-      <Card sx={{ minWidth: 600, marginTop: "50px", spacing: "10px" }}>
-    
-        <form>
-          <CardContent>
-            <Box>
-              <Typography gutterBottom variant="h4" component="div">
-                EditProfile
-              </Typography>
-            </Box>
-           
-        <Grid container spacing={0} direction='column' alignItems='center' justify='center'>
-          <Grid item xs={12}>
-            <Box >
-              {image === ''?
-             <Avatar
-             alt="Sachin"
-            
-             sx={{ width: 120, height: 120 }}
-           >
-             { getInitials(fullName)}
-           </Avatar>
-            :  
-            slashOn === false ?
-              <Avatar
-              alt="Remy Sharp"
-              src={`/${image}`}
-              sx={{ width: 120, height: 120 }}
-            >
-            </Avatar>
-            :
-            <Avatar
-            alt="Remy Sharp"
-            src={`${image}`}
-            sx={{ width: 120, height: 120 }}
-          >
-          </Avatar>
-            
-            }
-           
-            </Box>
-            </Grid>
-            </Grid>
-            <Grid item xs={12}>
+      <Navbar />
 
-            
-      <label htmlFor="contained-button-file">
-        <Input accept="image/*" id="contained-button-file"  type="file" onChange={handleChange}/>
-        <Button variant="contained" size="small" name='addphoto' component="span" sx={{margin:2}} >
-          Add
-        </Button>
-      </label>
-      <Button variant="contained" size="small" name='remove' component="span" onClick={handleRemove}>
-          Remove
-        </Button>
-      
-   
-    </Grid>
-    {/* </Box> */}
-            <Box sx={{ m: 2 }}>
-              <TextField
-                id="outlined-basic"
-                label="Name"
-                variant="outlined"
-                value={updateUserObj.name}
-                onChange={(e) => handleName(e.target.value)}
-                error={errors.name ? true : false}
-                helperText={errors.name}
-                fullWidth
-              />
-            </Box>
-            <Box sx={{ m: 2 }}>
-              <TextareaAutosize
-                aria-label="minimum height"
-                minRows={3}
-                value={updateUserObj.bio}
-                placeholder="Bio"
-                style={{ width: 520 }}
-                onChange={(e)=>setUpdateUserObj({...updateUserObj,bio:e.target.value})}
-              />
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "start" }}>
-              <FormControl>
-                <FormLabel sx={{ marginRight: "100px" }}> Gender</FormLabel>
-                <Box sx={{ marginLeft: "20px" }}>
-                  <RadioGroup
-                    name="gender"
-                    aria-labelledby="genderlabel"
-                    onChange={handleGender}
-                    value={updateUserObj.gender}
-                    row
-                  >
-                    <FormControlLabel
-                      control={<Radio size="small" />}
-                      label="Male"
-                      value="male"
-                    />
-                    <FormControlLabel
-                      control={<Radio size="small" />}
-                      label="Female"
-                      value="female"
-                    />
-                  </RadioGroup>
+      <Grid
+        container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        style={{ minHeight: "100vh", marginTop: "" }}
+      >
+        <Paper elevation={6} sx={{ margin: 5 }}>
+          <Card sx={{ minWidth: 600, marginTop: "50px", spacing: "10px" }}>
+            <form>
+              <CardContent>
+                <Box>
+                  <Typography gutterBottom variant="h4" component="div">
+                    EditProfile
+                  </Typography>
                 </Box>
-              </FormControl>
-            </Box>
-            <Box sx={{ marginLeft: "1.2rem" }}>
-              <Typography className={classes.root} align="left">
-                {errors.gender}
-              </Typography>
-            </Box>
-            <Box sx={{ m: 2 }}>
-              <Grid container>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DesktopDatePicker
-                    label="Date of Birth"
-                    value={new Date(updateUserObj.dob)}
-                    onChange={(newValue) => {
-                      onDateHandler(newValue);
-                    }}
-                    renderInput={(params) => (
-                      <TextField {...params} fullWidth />
-                    )}
-                  />
 
-                </LocalizationProvider>
-              </Grid>
-            </Box>
-            <Box sx={{ m: 2 }}>
-              <TextField
-                type="email"
-                id="outlined-basic"
-                label="Email"
-                variant="outlined"
-                value={updateUserObj.email}
-                onChange={(e) => handleEmail(e.target.value)}
-                error={errors.email ? true : false}
-                helperText={errors.email}
-                fullWidth
-              />
-            </Box>
-            <Box sx={{ m: 2 }}>
-              <MuiPhoneNumber
-                defaultCountry={"in"}
-                value={updateUserObj.mobile}
-                onChange={handleMobileNumber}
-                fullWidth
-              />
-              {/* <Typography>{errors.}</Typography> */}
-            </Box>
-          </CardContent>
-          <CardActions sx={{ marginLeft: "30px" }}>
-            <Button variant="contained" onClick={handleSubmit}>
-              Edit Profile
-            </Button>
-          </CardActions>
-        </form>
-      
-      </Card>
-      </Paper>
-    </Grid>
+                <Grid
+                  container
+                  spacing={0}
+                  direction="column"
+                  alignItems="center"
+                  justify="center"
+                >
+                  <Grid item xs={12}>
+                    <Box>
+                      {image === "" ? (
+                        <Avatar alt="Sachin" sx={{ width: 120, height: 120 }}>
+                          {getInitials(fullName)}
+                        </Avatar>
+                      ) : slashOn === false ? (
+                        <Avatar
+                          alt="Remy Sharp"
+                          src={`/${image}`}
+                          sx={{ width: 120, height: 120 }}
+                        ></Avatar>
+                      ) : (
+                        <Avatar
+                          alt="Remy Sharp"
+                          src={`${image}`}
+                          sx={{ width: 120, height: 120 }}
+                        ></Avatar>
+                      )}
+                    </Box>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <label htmlFor="contained-button-file">
+                    <Input
+                      accept="image/*"
+                      id="contained-button-file"
+                      type="file"
+                      onChange={handleChange}
+                    />
+                    <Button
+                      variant="contained"
+                      size="small"
+                      name="addphoto"
+                      component="span"
+                      sx={{ margin: 2 }}
+                    >
+                      Add
+                    </Button>
+                  </label>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    name="remove"
+                    component="span"
+                    onClick={handleRemove}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+                {/* </Box> */}
+                <Box sx={{ m: 2 }}>
+                  <TextField
+                    id="outlined-basic"
+                    label="Name"
+                    variant="outlined"
+                    value={updateUserObj.name}
+                    onChange={(e) => handleName(e.target.value)}
+                    error={errors.name ? true : false}
+                    helperText={errors.name}
+                    fullWidth
+                  />
+                </Box>
+                <Box sx={{ m: 2 }}>
+                  <TextareaAutosize
+                    aria-label="minimum height"
+                    minRows={3}
+                    value={updateUserObj.bio}
+                    placeholder="Bio"
+                    style={{ width: 520 }}
+                    onChange={(e) =>
+                      setUpdateUserObj({
+                        ...updateUserObj,
+                        bio: e.target.value,
+                      })
+                    }
+                  />
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "start" }}>
+                  <FormControl>
+                    <FormLabel sx={{ marginRight: "100px" }}> Gender</FormLabel>
+                    <Box sx={{ marginLeft: "20px" }}>
+                      <RadioGroup
+                        name="gender"
+                        aria-labelledby="genderlabel"
+                        onChange={handleGender}
+                        value={updateUserObj.gender}
+                        row
+                      >
+                        <FormControlLabel
+                          control={<Radio size="small" />}
+                          label="Male"
+                          value="male"
+                        />
+                        <FormControlLabel
+                          control={<Radio size="small" />}
+                          label="Female"
+                          value="female"
+                        />
+                      </RadioGroup>
+                    </Box>
+                  </FormControl>
+                </Box>
+                <Box sx={{ marginLeft: "1.2rem" }}>
+                  <Typography className={classes.root} align="left">
+                    {errors.gender}
+                  </Typography>
+                </Box>
+                <Box sx={{ m: 2 }}>
+                  <Grid container>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DesktopDatePicker
+                        label="Date of Birth"
+                        value={new Date(updateUserObj.dob)}
+                        onChange={(newValue) => {
+                          onDateHandler(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth />
+                        )}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                </Box>
+                <Box sx={{ m: 2 }}>
+                  <TextField
+                    type="email"
+                    id="outlined-basic"
+                    label="Email"
+                    variant="outlined"
+                    value={updateUserObj.email}
+                    onChange={(e) => handleEmail(e.target.value)}
+                    error={errors.email ? true : false}
+                    helperText={errors.email}
+                    fullWidth
+                  />
+                </Box>
+                <Box sx={{ m: 2 }}>
+                  <MuiPhoneNumber
+                    defaultCountry={"in"}
+                    value={updateUserObj.mobile}
+                    onChange={handleMobileNumber}
+                    fullWidth
+                  />
+                  <Typography
+                    align="left"
+                    sx={{ color: "red", fontSize: "0.8rem" }}
+                    onChange={handleOpen}
+                  >
+                    {errors.mobile}
+                  </Typography>
+                </Box>
+              </CardContent>
+              <CardActions sx={{ marginLeft: "30px" }}>
+                <Button variant="contained" onClick={handleSubmit}>
+                  Edit Profile
+                </Button>
+              </CardActions>
+            </form>
+          </Card>
+        </Paper>
+      </Grid>
     </>
   );
 }

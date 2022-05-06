@@ -215,8 +215,7 @@ function Login() {
                 clientId="72753215683-bnrorqcik8r5n6caofm1p3e7mlk0lf5l.apps.googleusercontent.com"
                 onSuccess={responseGoogle}
                 onFailure={responseGoogle}
-                // cookiePolicy={"single_host_origin"}
-                // isSignedIn={true}
+                
               />
             </Grid>
           </Grid>
