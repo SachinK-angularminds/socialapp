@@ -27,7 +27,7 @@ theme.typography.h4 = {
    color: "#4d79ff"
 }
 
-function SignUp() {
+function SignUp(props) {
   let navigate = useNavigate();
   const initialState = {
     firstName: "",
@@ -166,6 +166,7 @@ if(userobj.lastName===''){
         })
         .then(function (response) {
           console.log(response);
+          props.setOpen(true);
           navigate("/login");
         },(error)=>{
          setErrorServer(error.response.data.error.message)
@@ -256,7 +257,7 @@ if(userobj.lastName===''){
     {/* </CardActions> */}
     </Grid>
     <Grid container>
-    <Grid item xs={12} sx={{mt:3,mb:3,color:'red'}}>
+    <Grid item xs={12} sx={{mt:1,color:'red'}}>
     <Typography>{errorServer}</Typography>
 </Grid>
     </Grid>

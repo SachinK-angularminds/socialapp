@@ -2,7 +2,7 @@ import './App.css';
 import SignUp from './components/SignUp'
 import Login from './components/Login'
 import Login1 from './components/Login1'
-
+import React, { useState } from "react";
 import EditProfile from './components/EditProfile';
 import Feeds from './components/Feeds';
 import Feeds1 from './components/Feeds1';
@@ -12,6 +12,8 @@ import LoginProtectedRoutes from './components/ProtectedRoutes/LoginProtectedRou
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes'
 function App() {
+  const [openSignUp,setOpenSignUp]=useState(false)
+  const [openLogin,setOpenLogin]=useState(false)
 
   return (
     <div className="App">
@@ -21,12 +23,12 @@ function App() {
    
         <Route exact path="/" element={<Navigate to="/login" />}></Route>
         <Route element={<LoginProtectedRoutes />}>
-          <Route exact path="/login" element={<Login1 />}></Route>
-          <Route exact path="/signup" element={<SignUp />}></Route>
+          <Route exact path="/login" element={<Login1 open={openSignUp} setOpen={setOpenSignUp} setOpenLogin={setOpenLogin}/>}></Route>
+          <Route exact path="/signup" element={<SignUp open={openSignUp} setOpen={setOpenSignUp}/>}></Route>
 
         </Route>
         <Route element={<ProtectedRoutes />}>
-          <Route exact path="/feeds" element={<Feeds1 />}></Route>
+          <Route exact path="/feed" element={<Feeds1 openLogin={openLogin} setOpenLogin={setOpenLogin}/>}></Route>
           <Route exact path="/editprofile/:id" element={<EditProfile />}></Route>
         </Route>
       </Routes>

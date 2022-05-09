@@ -11,9 +11,9 @@ import {
 } from "@mui/material";
 import { useNavigate, NavLink } from "react-router-dom";
 import apiUrl from "../api";
-import Snackbar from '@mui/material/Snackbar';
 import { GoogleLogin } from "react-google-login";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 const theme = createTheme();
 theme.typography.div = {
@@ -26,8 +26,10 @@ theme.typography.h4 = {
   fontSize: "2rem",
   color: "#4d79ff",
 };
-
-function Login() {
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+function Login(props) {
   let navigate=useNavigate()
   const initialState = {
  
@@ -38,6 +40,13 @@ function Login() {
   const [errors, seterrors] = useState({ email: "", password: "" });
   const [errorServer,setErrorServer]=useState('')
 
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    props.setOpen(false);
+  };
   
   const handleEmail = (event) => {
     setUserCrediantialObj({ ...userceredantialobj, email: event });
@@ -142,7 +151,8 @@ function Login() {
         console.log(response)
         localStorage.setItem('token',JSON.stringify(response.data.token))
         localStorage.setItem('userInfo',JSON.stringify(response.data.user))
-        navigate('/feeds')
+        props.setOpenLogin(true)
+        navigate('/feed')
   
       },(error)=>{
         setErrorServer(error.response.data.error.message)
@@ -202,6 +212,14 @@ function Login() {
             >
               Login
             </Button>
+            <Snackbar open={props.open} autoHideDuration={3000} onClose={handleClose}  anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          SignUp successful!
+        </Alert>
+      </Snackbar>
             {/* <Button variant="contained" onClick={handleSignup}>Signout</Button> */}
             {/* </CardActions> */}
           </Grid>
