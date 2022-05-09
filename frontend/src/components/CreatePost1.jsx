@@ -14,12 +14,8 @@ import {
     Button,
     Typography,
   } from "@mui/material";
-  import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-  import FavoriteIcon from "@mui/icons-material/Favorite";
-  import MoreVertIcon from "@mui/icons-material/MoreVert";
-  import { styled } from "@mui/material/styles";
-  import { red } from "@mui/material/colors";
-
+  import Tooltip from '@mui/material/Tooltip';
+ 
 const style = {
     position: 'absolute',
     top: '50%',
@@ -112,7 +108,9 @@ function CreatePost1(props) {
     
   return (
       <div >
-    <Button onClick={handleOpen}><AddCircleIcon fontSize='large'/></Button>
+
+    <Button onClick={handleOpen}><Tooltip title="Create Post">
+<AddCircleIcon fontSize='large'/></Tooltip></Button>
     <Modal
       open={open}
       onClose={handleClose}
