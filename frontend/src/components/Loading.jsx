@@ -15,7 +15,7 @@ function Loading() {
         alignItems="center"
         //style={{ minHeight: "100vh", marginTop: "" }}
       >
-      <Card sx={{ maxWidth: 345, m: 2 }}>
+      <Card sx={{ maxWidth: 545, m: 2 }}>
       <CardHeader
         avatar={
             <Skeleton animation="wave" variant="circular" width={40} height={40} />

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Card,
-  CardActions,
   Grid,
   Typography,
   Box,
@@ -10,7 +9,6 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate,NavLink } from "react-router-dom";
-import axios from "axios";
 import apiUrl from '../api';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -157,7 +155,7 @@ if(userobj.lastName===''){
 
   const handleSubmit = async () => {
     if (validate()) {
-     const result = await apiUrl
+      await apiUrl
         .post("register", {
           firstName: userobj.firstName,
           lastName: userobj.lastName,

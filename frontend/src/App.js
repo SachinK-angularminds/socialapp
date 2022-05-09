@@ -28,7 +28,7 @@ function App() {
 
         </Route>
         <Route element={<ProtectedRoutes />}>
-          <Route exact path="/feed" element={<Feeds1 openLogin={openLogin} setOpenLogin={setOpenLogin}/>}></Route>
+          <Route exact path="/feed" element={<Feeds openLogin={openLogin} setOpenLogin={setOpenLogin} />}></Route>
           <Route exact path="/editprofile/:id" element={<EditProfile />}></Route>
         </Route>
       </Routes>

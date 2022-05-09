@@ -17,7 +17,7 @@ import {
   TextareaAutosize,
   Paper,
 } from "@mui/material";
-import { LocalizationProvider, DatePicker, DesktopDatePicker } from "@mui/lab";
+import { LocalizationProvider, DatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import MuiPhoneNumber from "material-ui-phone-number";
 import { makeStyles } from "@mui/styles";
@@ -26,6 +26,8 @@ import { styled } from "@mui/material/styles";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useEffect } from "react";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import apiUrl from "../api";
 
 const Input = styled("input")({
@@ -36,12 +38,16 @@ const useStyles = makeStyles({
     color: "red",
   },
 });
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 function EditProfile(props) {
   const classes = useStyles();
   const { id } = useParams();
   let navigate = useNavigate();
   const formdata = new FormData();
-
+ 
   const initialState = {
     name: "",
     bio: "",
@@ -55,6 +61,8 @@ function EditProfile(props) {
   const [image, setImage] = useState("");
   const [open,setOpen] = useState(false)
   const [fullName, setFullName] = React.useState("");
+  const [updateProfileSnackbar,setUpdateProfileSnackbar]=useState(false)
+
   const [userInfo, setUserInfo] = useState(() =>
     JSON.parse(localStorage.getItem("userInfo"))
   );
@@ -70,12 +78,6 @@ function EditProfile(props) {
     getUserProfile();
   }, []);
 
-//   const getPhoto = () => {
-//     if(updateUserObj.photo)
-//   }
-// useEffect(() => {
-//   getPhoto()
-// },[photo])
 
   useEffect(() => {
     let name = userInfo.firstName + " " + userInfo.lastName;
@@ -103,6 +105,13 @@ function EditProfile(props) {
     });
   };
   console.log(image);
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setUpdateProfileSnackbar(false);
+  };
   const handleName = (event) => {
     setUpdateUserObj({ ...updateUserObj, name: event });
     if (event === "") {
@@ -243,8 +252,12 @@ function EditProfile(props) {
       const result = await apiUrl
         .post(`edit/${id}`, formdata)
         .then((response) => console.log(response));
-      setslashOn(false);
-      navigate("/feeds");
+        setUpdateProfileSnackbar(true)
+     // setslashOn(false);
+      setTimeout(() => {
+        navigate("/feed");
+      },1000)
+     
     }
   };
   const getInitials = (fullName) => {
@@ -260,13 +273,12 @@ function EditProfile(props) {
   return (
     <>
       <Navbar />
-
       <Grid
         container
         spacing={0}
         direction="column"
         alignItems="center"
-        style={{ minHeight: "100vh", marginTop: "" }}
+        style={{ minHeight: "100vh", marginTop: "", backgroundColor: "#e6f2ff"  }}
       >
         <Paper elevation={6} sx={{ margin: 5 }}>
           <Card sx={{ minWidth: 600, marginTop: "50px", spacing: "10px" }}>
@@ -396,9 +408,9 @@ function EditProfile(props) {
                 <Box sx={{ m: 2 }}>
                   <Grid container>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DesktopDatePicker
+                      <DatePicker
                         label="Date of Birth"
-                        value={updateUserObj?new Date(updateUserObj.dob):''}
+                        value={updateUserObj?(updateUserObj.dob):null}
                         onChange={(newValue) => {
                           onDateHandler(newValue);
                         }}
@@ -442,10 +454,19 @@ function EditProfile(props) {
                 <Button variant="contained" onClick={handleSubmit}>
                   Edit Profile
                 </Button>
+                <Snackbar open={updateProfileSnackbar} autoHideDuration={1000} onClose={handleClose}     anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Update successful!
+        </Alert>
+      </Snackbar> 
               </CardActions>
             </form>
           </Card>
         </Paper>
+       
       </Grid>
     </>
   );

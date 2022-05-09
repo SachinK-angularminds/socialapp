@@ -8,6 +8,8 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
+import Key from '@mui/icons-material/Key';
+import Logout from '@mui/icons-material/Logout';
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -141,15 +143,20 @@ useEffect(()=>{
             >
             
                 <MenuItem  onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">
-                    <NavLink to={{pathname:`/editprofile/${userInfo._id}`, state: {image:'lol'} }} style={{textDecoration:'none',color:'black'}}>Edit Profile</NavLink>
+                <Avatar sx={{ width: 18, height: 18, mr: "5px" }} />
+                  <Typography textAlign="left">
+                  <NavLink to={{pathname:`/editprofile/${userInfo._id}`, state: {image:'lol'} }} style={{textDecoration:'none',color:'black'}}>Edit Profile</NavLink>
                     </Typography>
                 </MenuItem>
                 <MenuItem  onClick={handleCloseUserMenu}>
-                  <ChangePassword/>
+                <Key fontSize="small" sx={{ mr: "5px", color: "#BEBEBE" }} /> <ChangePassword/>
                 </MenuItem>
                
                 <MenuItem  onClick={handleCloseUserMenu}>
+                <Logout
+                    fontSize="small"
+                    sx={{ mr: "5px" ,color: "#BEBEBE" }}
+                  />
                   <Typography textAlign="center" onClick={handleLogout}>Log out</Typography>
                 </MenuItem>
              

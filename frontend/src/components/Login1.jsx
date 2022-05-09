@@ -141,7 +141,7 @@ function Login(props) {
   };
   const handleSubmit=async()=>{
     if(validate()){
-      const result=await apiUrl
+      await apiUrl
       .post("login", {
         
         email: userceredantialobj.email,
@@ -202,8 +202,12 @@ function Login(props) {
           </Box>
         </CardContent>
         <Grid container>
+        <Grid item xs={12} style={{marginTop:"-1.5rem",color:'red'}}>
+        {errorServer}
+        </Grid>
+        </Grid>
+        <Grid container>
           <Grid item xs={12}>
-            {/* <CardActions sx={{marginLeft:'30px'}}> */}
             <Button
               variant="contained"
               size="large"

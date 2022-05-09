@@ -1,7 +1,8 @@
 import React,{useState} from 'react'
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Modal from '@mui/material/Modal';
 import apiUrl from "../api";
 import {
-    Accordion,
     Card,
     Grid,
     TextareaAutosize,
@@ -10,8 +11,6 @@ import {
     CardMedia,
     CardActionArea,
     CardActions,
-    AccordionSummary,
-    AccordionDetails,
     Button,
     Typography,
   } from "@mui/material";
@@ -20,7 +19,25 @@ import {
   import MoreVertIcon from "@mui/icons-material/MoreVert";
   import { styled } from "@mui/material/styles";
   import { red } from "@mui/material/colors";
-function CreatePost(props) {
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+function CreatePost1(props) {
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => {
+    setObjOfPost(initialState)    
+        setOpen(false)
+    };
     const formdata = new FormData();
     const initialState = {
         file: "",
@@ -85,29 +102,28 @@ function CreatePost(props) {
            await apiUrl.post(`post`, formdata).then((response) => {
             console.log(response.data.post);
             props.setPost((postData) => [response.data.post,...postData]);
-    
+            
           });
     
           setObjOfPost({ image: "", text: "" });
+          handleClose()
         }
       };
+    
   return (
-    <div>
-      <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Create Post</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Box component="main" width="auto" height="auto">
-                  <Box>
-                    <h1 style={{ margin: 3 }}>Upload an Image</h1>
-                    <Grid container spacing={2}>
-                      <Grid item xs={6}>
-                        <TextField
+      <div >
+    <Button onClick={handleOpen}><AddCircleIcon fontSize='large'/></Button>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+         Upload an Image
+        </Typography>
+        <TextField
                           id="outlined-full-width"
                           label="Image Upload"
                           style={{ margin: 8 }}
@@ -125,9 +141,10 @@ function CreatePost(props) {
                         />
 
                         {objOfPost.image.length > 0 && (
-                          <Card>
+                          <Card sx={{mb:3,marginLeft:"0.5rem"}}> 
                             <CardActionArea>
                               <CardMedia
+                              
                                 component="img"
                                 alt="Contemplative Reptile"
                                 height="140"
@@ -138,17 +155,15 @@ function CreatePost(props) {
                             </CardActionArea>
                           </Card>
                         )}
-                      </Grid>
-                      <Grid item xs={6}>
                         <TextareaAutosize
                           aria-label="minimum height"
                           minRows={4}
                           placeholder="Caption"
                           value={objOfPost.text}
-                          style={{ width: "30em" }}
+                          style={{ marginLeft:'0.6rem',width: "29.7em" }}
                           onChange={(e) => handleCaptionText(e.target.value)}
                         />
-                        <Box sx={{ marginLeft: "9rem" }}>
+                        <Box sx={{ marginLeft: "0.5rem",mt:1 }}>
                           <Typography
                             align="left"
                             sx={{ color: "red", fontSize: "0.8rem" }}
@@ -156,19 +171,16 @@ function CreatePost(props) {
                             {errors.text}
                           </Typography>
                         </Box>
-                      </Grid>
-                    </Grid>
-                    <CardActions disableSpacing>
-                      <Button variant="contained" onClick={handlePostData}>
+                        <Box sx={{mt:1,marginLeft: "0.5rem"}}>
+                        <Button variant="contained" onClick={handlePostData}>
                         Post
                       </Button>
-                    </CardActions>
-                  </Box>
-                </Box>
-              </AccordionDetails>
-            </Accordion>
+                        </Box>
+                        
+      </Box>
+    </Modal>
     </div>
   )
 }
 
-export default CreatePost
+export default CreatePost1

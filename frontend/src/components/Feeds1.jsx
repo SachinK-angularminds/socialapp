@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-  Accordion,
   Card,
   Grid,
-  TextareaAutosize,
   Box,
   CardContent,
   TextField,
   CardMedia,
-  CardActionArea,
   CardActions,
-  AccordionSummary,
-  AccordionDetails,
   IconButton,
   Avatar,
   Collapse,
@@ -32,6 +27,7 @@ import MuiAlert from '@mui/material/Alert';
 import InfiniteScroll from "react-infinite-scroll-component";
 import apiUrl from "../api";
 import Loading from "./Loading";
+import CommentIcon from '@mui/icons-material/Comment';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -55,11 +51,9 @@ function Feeds(props) {
     text: "",
     image: "",
   };
-  const [objOfPost, setObjOfPost] = useState(initialState);
   let [post, setPost] = useState("");
   const [expanded, setExpanded] = React.useState(false);
   const [ind, setInd] = useState(-1);
-  const [errors, setErrors] = useState({file:'',text:''});
   const [pageNumber, setPageNumber] = useState(2);
   const [commentValue, setCommentValue] = useState("");
   const [image, setImage] = useState("");
@@ -78,6 +72,14 @@ function Feeds(props) {
     }
 
     props.setOpenLogin(false);
+  };
+
+  const handleClose1 = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    props.updateProfileSnackbar(false);
   };
   const getAllPosts = async () => {
     
@@ -188,6 +190,10 @@ function Feeds(props) {
     setPost(postArr);
     console.log(result.data);
   };
+
+  const handleCommentButton=()=>{
+    
+  }
   const getInitials = (fullName) => {
     const allNames = fullName.trim().split(" ");
     const initials = allNames.reduce((acc, curr, index) => {
@@ -254,17 +260,12 @@ function Feeds(props) {
                           >
                          { getInitials(data.userName)} 
                           </Avatar>
-                             
                              </>
                           :
                           ''
                         
                         ))}
-                        
-                   
                         <>
-                         
-
                           <Typography sx={{ margin: 1 }}>{data.userName}</Typography>
                         </>
                         </>
@@ -309,7 +310,15 @@ function Feeds(props) {
                       >
                         <FavoriteIcon />
                       </IconButton>
-
+                      <Typography>{data.like.length}</Typography>
+                      <IconButton
+                        aria-label="add to favorites"
+                        
+                        onClick={(e) => handleCommentButton(e, data._id)}
+                      >
+                        <CommentIcon />
+                      </IconButton>
+                      <Typography>{data.comments.length}</Typography>
                       <ExpandMore
                         expand={ind === index ? expanded : false}
                         onClick={() => handleExpand(index)}
@@ -381,6 +390,14 @@ function Feeds(props) {
           Login successful!
         </Alert>
       </Snackbar>
+      {/* <Snackbar open={props.updateProfileSnackbar} autoHideDuration={100} onClose={handleClose1}     anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}>
+        <Alert onClose={handleClose1} severity="success" sx={{ width: '100%' }}>
+          Update successful!
+        </Alert>
+      </Snackbar> */}
     </div>
   );
 }
