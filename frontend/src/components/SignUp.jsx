@@ -179,9 +179,9 @@ if(userobj.lastName===''){
       spacing={0}
       direction="column"
       alignItems="center"
-      style={{ minHeight: "100vh", marginTop: "", backgroundColor: "#b3c6ff" }}
+      style={{ minHeight: "100vh", marginTop: "" }}
     >
-      <Card sx={{ minWidth: 420, marginTop: "100px", spacing: "10px" }}>
+      <Card sx={{ minWidth: 420, marginTop: "100px", spacing: "10px" ,boxShadow: 6 }}>
         <form>
           <CardContent>
             <Box>

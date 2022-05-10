@@ -163,7 +163,6 @@ function Feeds(props) {
       }
     }
     setPost(postArr);
-    console.log(result.data);
   };
 
   const handleCommentButton=(index)=>{

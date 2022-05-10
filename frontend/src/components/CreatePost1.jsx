@@ -109,8 +109,11 @@ function CreatePost1(props) {
   return (
       <div >
 
-    <Button onClick={handleOpen}><Tooltip title="Create Post">
-<AddCircleIcon fontSize='large'/></Tooltip></Button>
+    <Button onClick={handleOpen}>
+        <Tooltip title="Create Post">
+           <AddCircleIcon fontSize='large'/>
+        </Tooltip>
+    </Button>
     <Modal
       open={open}
       onClose={handleClose}

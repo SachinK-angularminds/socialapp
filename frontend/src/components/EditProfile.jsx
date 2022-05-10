@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import {
   Card,
   CardActions,
@@ -47,7 +47,8 @@ function EditProfile(props) {
   const { id } = useParams();
   let navigate = useNavigate();
   const formdata = new FormData();
- 
+  const imageRef = useRef();
+
   const initialState = {
     name: "",
     bio: "",
@@ -59,10 +60,10 @@ function EditProfile(props) {
   };
   const [updateUserObj, setUpdateUserObj] = useState(initialState);
   const [image, setImage] = useState("");
+  const [updatedImage, setUpdatedImage] = useState('')
   const [open,setOpen] = useState(false)
   const [fullName, setFullName] = React.useState("");
   const [updateProfileSnackbar,setUpdateProfileSnackbar]=useState(false)
-
   const [userInfo, setUserInfo] = useState(() =>
     JSON.parse(localStorage.getItem("userInfo"))
   );
@@ -83,35 +84,26 @@ function EditProfile(props) {
     let name = userInfo.firstName + " " + userInfo.lastName;
     setFullName(name);
   }, [fullName]);
+
   const getUserProfile = async () => {
     await apiUrl.get(`user-profile`).then(function (response) {
-      console.log(response.data.user);
       if(!response.data){
         setUpdateUserObj({})
         setImage({})
       }else{
-        console.log(response.data)
         setUpdateUserObj(response.data.user);
         setImage(response.data.user.photo);
-       
-        // if(response.data.user.photo === '' || response.data.user.photo === undefined ){
-        //   setImage('')
-        // }else{
-        //   setImage(response.data.user.photo);
-
-        // }
       }
      
     });
   };
-  console.log(image);
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
-
     setUpdateProfileSnackbar(false);
   };
+
   const handleName = (event) => {
     setUpdateUserObj({ ...updateUserObj, name: event });
     if (event === "") {
@@ -123,7 +115,6 @@ function EditProfile(props) {
 
   const handleEmail = (event) => {
     setUpdateUserObj({ ...updateUserObj, email: event });
-
     if (event === "") {
       seterrors({ ...errors, email: "Email cannot be empty" });
     } else if (
@@ -136,9 +127,8 @@ function EditProfile(props) {
   };
   const handleMobileNumber = (value) => {
     setUpdateUserObj({ ...updateUserObj, mobile: value });
-    console.log(value.length)
-   
   };
+
   const handleGender = (event) => {
     setUpdateUserObj({ ...updateUserObj, gender: event.target.value });
     if (event === "") {
@@ -148,7 +138,6 @@ function EditProfile(props) {
     }
   };
   const onDateHandler = (value) => {
-    // date = date.slice(1,11)
     setUpdateUserObj({
       ...updateUserObj,
       dob: value,
@@ -156,12 +145,12 @@ function EditProfile(props) {
   };
   const handleChange = (e) => {
     setUpdateUserObj({ ...updateUserObj, photo: e.target.files[0] });
+    setUpdatedImage(e.target.files[0]);
     setslashOn(true);
+    console.log(imageRef.current.value)
     const url = URL.createObjectURL(e.target.files[0]);
-    console.log(url);
     setImage(url);
   };
-  console.log(updateUserObj);
   const handleRemove = () => {
     setImage("");
   };
@@ -200,7 +189,6 @@ function EditProfile(props) {
     }
 
     if (updateUserObj.email === "") {
-      // seterrors({...errors,email:'Email cannot be empty'})
       seterrors((prevState) => ({
         ...prevState.errors,
         email: "Email cannot be empty",
@@ -238,7 +226,7 @@ function EditProfile(props) {
       return true;
     }
   };
-  console.log(errors);
+
   const handleSubmit = async () => {
     formdata.append("photo", updateUserObj.photo);
     formdata.append("name", updateUserObj.name);
@@ -249,17 +237,19 @@ function EditProfile(props) {
     formdata.append("email", updateUserObj.email);
     console.log(formdata.get("photo"));
     if (validate()) {
-      const result = await apiUrl
+      await apiUrl
         .post(`edit/${id}`, formdata)
         .then((response) => console.log(response));
         setUpdateProfileSnackbar(true)
-     // setslashOn(false);
+     
       setTimeout(() => {
+        setslashOn(false);
         navigate("/feed");
       },1000)
      
     }
   };
+
   const getInitials = (fullName) => {
     const allNames = fullName.trim().split(" ");
     const initials = allNames.reduce((acc, curr, index) => {
@@ -325,6 +315,7 @@ function EditProfile(props) {
                       accept="image/*"
                       id="contained-button-file"
                       type="file"
+                      ref={imageRef}
                       onChange={handleChange}
                     />
                     <Button
