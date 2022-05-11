@@ -57,6 +57,7 @@ function EditProfile(props) {
     email: "",
     mobile: "",
     photo: "",
+    removeImg:false
   };
   const [updateUserObj, setUpdateUserObj] = useState(initialState);
   const [image, setImage] = useState("");
@@ -153,8 +154,9 @@ function EditProfile(props) {
   };
   const handleRemove = () => {
     setImage("");
+    setUpdateUserObj({...updateUserObj,removeImg:true})
   };
-
+console.log(updateUserObj.removeImg)
   const handleOpen = () => {
     setOpen(true);
   }
@@ -235,7 +237,9 @@ function EditProfile(props) {
     formdata.append("dob", updateUserObj.dob);
     formdata.append("mobile", updateUserObj.mobile);
     formdata.append("email", updateUserObj.email);
-    console.log(formdata.get("photo"));
+    formdata.append("removeImg",updateUserObj.removeImg);
+
+    console.log(formdata.get("removeImg"));
     if (validate()) {
       await apiUrl
         .post(`edit/${id}`, formdata)
